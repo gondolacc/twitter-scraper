@@ -30,6 +30,7 @@ export async function requestApi<T>(
       url,
       headers,
       cookieJar: auth.cookieJar(),
+      proxyUrl: auth.proxyUrl,
     });
   } catch (err) {
     if (!(err instanceof Error)) {

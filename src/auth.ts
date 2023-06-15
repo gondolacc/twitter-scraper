@@ -49,6 +49,8 @@ export interface TwitterAuth {
    * @param headers A key-value object representing a request's headers.
    */
   installTo(headers: { [key: string]: unknown }, url: string): Promise<void>;
+
+  proxyUrl: string | undefined;
 }
 
 /**
@@ -59,10 +61,12 @@ export class TwitterGuestAuth implements TwitterAuth {
   protected jar: CookieJar;
   protected guestToken?: string;
   protected guestCreatedAt?: Date;
+  protected _proxyUrl?: string;
 
-  constructor(bearerToken: string) {
+  constructor(bearerToken: string, proxyUrl?: string) {
     this.bearerToken = bearerToken;
     this.jar = new CookieJar();
+    this._proxyUrl = proxyUrl;
   }
 
   cookieJar(): CookieJar {
@@ -101,6 +105,10 @@ export class TwitterGuestAuth implements TwitterAuth {
     return new Date(this.guestCreatedAt);
   }
 
+  get proxyUrl() {
+    return this._proxyUrl;
+  }
+
   async installTo(
     headers: { [key: string]: unknown },
     url: string,
@@ -133,6 +141,7 @@ export class TwitterGuestAuth implements TwitterAuth {
       headers: {
         Authorization: `Bearer ${this.bearerToken}`,
       },
+      proxyUrl: this._proxyUrl,
       cookieJar: this.jar,
     });
 
